@@ -11,11 +11,30 @@ function createConnection(credentials) {
   var sender = new TcpSender(credentials);
   tcpSockets.push(sender);
   sender.on('end', function() {
+    console.log('end event');
+    spliceSender(sender);
+  });
+
+  sender.on('close', function() {
+    console.log('close event');
+    spliceSender(sender);  
+  });
+
+  sender.on('error', function(e) {
+    console.log('error:', e);
+    spliceSender(sender);
+  });
+
+  sender.on('connect', function() {
+    console.log('connect event');
+  });
+
+  function spliceSender(sender) {
     var idx = tcpSockets.indexOf(sender);
     if(idx > -1) {
       tcpSockets.splice(idx, 1);
     }
-  });
+  }
 }
 
 
